@@ -6,6 +6,26 @@
 // - zoom: el nivel de zoom.
 // - x: la posición horizontal del mouse.
 // - y: la posición vertical del mouse.
+import { BsZoomIn as ZoomInIcon } from "react-icons/bs";
+import { BsZoomOut as ZoomOutIcon } from "react-icons/bs";
+import { motion } from "framer-motion";
+
+const variants = {
+  hidden: {
+    opacity: 0,
+    scale: 0,
+    transition: {
+      duration: 0.2,
+    },
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.2,
+    },
+  },
+};
 
 export default function Zoom({
   src,
@@ -14,14 +34,34 @@ export default function Zoom({
   zoom = 1.8,
   x,
   y,
+  isZooming,
+  onOpen,
+  onClose,
   className,
 }) {
-  const containerWidth = 224;
-  const containerHeight = 288;
+  if (!isZooming) {
+    return (
+      <motion.button
+        initial="hidden"
+        animate="visible"
+        variants={variants}
+        className={`m-4 p-5 rounded-full cursor-pointer bg-cyan-600 opacity-75 hover:opacity-100 ${className}`}
+        onClick={onOpen}
+      >
+        <ZoomInIcon className="text-3xl text-white" />
+      </motion.button>
+    );
+  }
+
+  const containerWidth = 224; // w-56
+  const containerHeight = 288; // h-72
 
   return (
-    <div
-      className={`w-[${containerWidth}px] h-[${containerHeight}px] border backdrop-blur overflow-hidden ${className}`}
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={variants}
+      className={`w-56 h-72 cursor-default border-2 border-cyan-600 backdrop-blur overflow-hidden ${className}`}
     >
       <img
         src={src}
@@ -34,6 +74,13 @@ export default function Zoom({
         }}
         draggable="false"
       />
+      {/* CLOSE */}
+      <button
+        className="absolute top-0 right-0 m-2 cursor-pointer"
+        onClick={onClose}
+      >
+        <ZoomOutIcon className="text-3xl text-white" />
+      </button>
       {/* DIANA */}
       <div
         className="absolute w-20 h-20 rounded-full border-4 border-dashed border-white -translate-x-1/2 -translate-y-1/2 bg-[rgba(255,255,255,.2)]"
@@ -49,6 +96,6 @@ export default function Zoom({
           top: containerHeight / 2,
         }}
       ></div>
-    </div>
+    </motion.div>
   );
 }
